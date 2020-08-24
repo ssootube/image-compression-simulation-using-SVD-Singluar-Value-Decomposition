@@ -48,13 +48,13 @@ public:
 		empty = false;
 	}
 
-	void getEVDColor(int color, int rate) {
+	void getSVDColor(int color, int rate) {
 		if (!processed[color]) {
 			Mat ATA = origin[color].transpose() * origin[color]; // (A^T)*(A) 행렬입니다.
 			SelfAdjointEigenSolver<Mat> eigensolver(ATA);
 			assert(eigensolver.info() == Success);
 			Mat eigenValues = eigensolver.eigenvalues();
-			Mat eigenVectors = eigensolver.eigenvectors();			
+			Mat eigenVectors = eigensolver.eigenvectors();
 			int num = eigenValues.rows();//고유값의 개수
 
 			for (int i = 0; i < num; ++i) {
@@ -70,12 +70,12 @@ public:
 			output[color] = Mat(y_size, x_size);
 			reset(output[color]);
 		}
-		if (added[color] <= rate) 
-			for (int i = added[color] + 1; i < rate; ++i) 
-				output[color] += (origin[color] * lists[color][i].second) * lists[color][i].second.transpose();		
-		else 
+		if (added[color] <= rate)
+			for (int i = added[color] + 1; i < rate; ++i)
+				output[color] += (origin[color] * lists[color][i].second) * lists[color][i].second.transpose();
+		else
 			for (int i = added[color]; i >= rate; --i)
-				output[color] -= (origin[color] * lists[color][i].second) * lists[color][i].second.transpose();		
+				output[color] -= (origin[color] * lists[color][i].second) * lists[color][i].second.transpose();
 		added[color] = rate - 1;
 	}
 };
@@ -89,9 +89,9 @@ RGB getMatrixFromImage(Image& img) {
 
 	for (int i = 0; i < x_size; ++i) {
 		for (int j = 0; j < y_size; ++j) {
-				red(j, i) = img.getPixel(i, j).r;
-				green(j, i) = img.getPixel(i, j).g;
-				blue(j ,i) = img.getPixel(i, j).b;
+			red(j, i) = img.getPixel(i, j).r;
+			green(j, i) = img.getPixel(i, j).g;
+			blue(j, i) = img.getPixel(i, j).b;
 		}
 	}
 	return RGB(red, green, blue);
@@ -99,7 +99,7 @@ RGB getMatrixFromImage(Image& img) {
 
 Image getImageFromRGB(RGB& rgb) {
 	Image  result;
-	result.create(rgb.x_size,rgb.y_size);
+	result.create(rgb.x_size, rgb.y_size);
 	for (int i = 0; i < rgb.x_size; ++i) {
 		for (int j = 0; j < rgb.y_size; ++j) {
 			Color color;
@@ -139,9 +139,9 @@ int main() {
 					window.draw(output);
 					window.display();
 					if (k <= mat.x_size) {
-						mat.getEVDColor(RGB::R, k);
-						mat.getEVDColor(RGB::G, k);
-						mat.getEVDColor(RGB::B, k++);
+						mat.getSVDColor(RGB::R, k);
+						mat.getSVDColor(RGB::G, k);
+						mat.getSVDColor(RGB::B, k++);
 						applied = getImageFromRGB(mat);
 						t.loadFromImage(applied);
 						output.setTexture(t);
@@ -149,7 +149,7 @@ int main() {
 					}
 					break;
 				}
-		}	
+		}
 	}
 	return 0;
 }
